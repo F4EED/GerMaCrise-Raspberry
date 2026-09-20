@@ -1,31 +1,44 @@
 # Installation
 
-## Matériel
+Tu prépares le code **sur le PC de dev**. Tu n’installes la pile **que sur le Raspberry Pi**.
 
-- Raspberry Pi 4 **8 Go**, OS 64-bit, **SSD** (la SD suffit à peine)
-- Deux [Seeed XIAO ESP32S3 + Wio-SX1262](https://www.seeedstudio.com/Wio-SX1262-with-XIAO-ESP32S3-p-5982.html), câbles USB **data**, antennes LoRa **avant** d’émettre
-- Onduleur si usage crise
+## 1. PC de dev (déjà fait si tu as poussé ce dépôt)
 
-## Première fois (avec internet)
+- Éditer docs / scripts / `.env.example`
+- `git commit` / `git push` vers GitHub
+- Optionnel : extraire des `.pmtiles` ici (x86), puis les copier sur le Pi dans `data/pmtiles/` et `apps/cartoff/pmtiles/`
+- **Ne pas** exécuter `sudo ./scripts/install.sh` sur le PC (mauvaise archi, mauvais udev, Docker amd64)
+
+`save-images.sh` sur un PC Intel tire des images **amd64** inutilisables sur le Pi. Pour un air-gap, lance-le **sur le Pi** (ou un hôte ARM64) tant qu’il a internet.
+
+## 2. Image vierge sur le Pi
+
+Flash **Raspberry Pi OS 64-bit** (pas RAKPiOS). Active SSH, Ethernet ou Wi-Fi. Premier boot, note l’IP.
+
+## 3. Sur le Pi (SSH depuis le PC)
+
+Matériel : Pi 4 **8 Go**, **SSD**, deux Seeed USB (câbles data, antennes avant TX), onduleur si crise.
 
 ```bash
-cd "/chemin/vers/raspberry germacrise"
+git clone https://github.com/F4EED/GerMaCrise-Raspberry.git
+cd GerMaCrise-Raspberry
 cp .env.example .env
 nano .env
 sudo ./scripts/install.sh
+sudo ./scripts/status.sh
 ```
 
-Le script :
+Le script (sur le Pi seulement) :
 
 1. installe Docker + règles **udev** Seeed ;
 2. clone les six dépôts dans `apps/` ;
-3. télécharge **go-pmtiles** (ARM64 sur Pi) ;
+3. télécharge **go-pmtiles** (ARM64) ;
 4. reconstitue le fond Loire Cartoff s’il est découpé dans git ;
 5. lance **Portainer** (`:9443` seulement, pas le 8000 Edge) ;
 6. lance **EMQX 5.3.2**, portail, Cartoff, MeshQTT ;
 7. build/start **GerMaCrise** (`docker-compose.poc.yml` + surcharge Pi).
 
-Le build GerMaCrise sur ARM **peut prendre 30–90 min**.
+Le build GerMaCrise sur ARM **peut prendre 30–90 min**. Le portail s’ouvre **depuis le PC** : `http://<IP-du-Pi>/`.
 
 ### Options
 

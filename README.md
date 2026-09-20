@@ -2,9 +2,18 @@
 
 SRV de la valise Gestion de PC GerMaCrise : installation **automatisée** d’un poste de commandement **100 % local** (mesh LoRa, deux Seeed USB, MQTT **EMQX 5.3.2**, main courante, cartes PMTiles, MeshQTT, Portainer).
 
-Ce dépôt ne recopie pas les applications F4EED : le script les **clone** et les **câble** (ports, broker, PostGIS, hors-ligne).
+Ce dépôt est **public** : clone sans compte GitHub. Tu prépares le code **sur un PC de dev** ; `install.sh` ne tourne **que sur le Raspberry Pi**.
 
-## Démarrage rapide (Pi 4, 8 Go, SSD, internet une fois)
+## Deux machines
+
+| Où tu es | Quoi faire |
+|---|---|
+| **PC de dev** (ici) | Git, `.env.example`, docs, `git push`. **Ne pas** lancer `install.sh` |
+| **Raspberry Pi** | OS vierge 64-bit, puis clone + `sudo ./scripts/install.sh` |
+
+Le script installe Docker, udev USB, EMQX ARM, etc. : ça n’a de sens **que sur le Pi**.
+
+## Sur le Pi (après image vierge + SSH)
 
 ```bash
 git clone https://github.com/F4EED/GerMaCrise-Raspberry.git
@@ -16,7 +25,7 @@ sudo ./scripts/install.sh
 sudo ./scripts/status.sh
 ```
 
-Ouvre `http://<IP-du-Pi>/` (portail).
+Depuis un navigateur du PC : `http://<IP-du-Pi>/` (portail).
 
 Options :
 
