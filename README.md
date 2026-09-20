@@ -7,7 +7,8 @@ Ce dépôt ne recopie pas les applications F4EED : le script les **clone** et le
 ## Démarrage rapide (Pi 4, 8 Go, SSD, internet une fois)
 
 ```bash
-cd "/home/gmc-poste-2/Apps/raspberry germacrise"
+git clone https://github.com/F4EED/GerMaCrise-Raspberry.git
+cd GerMaCrise-Raspberry
 cp .env.example .env
 nano .env          # mots de passe EMQX / PostGIS / SECRET_KEY
 
