@@ -1,0 +1,4 @@
+# Liens stables pour les deux XIAO ESP32S3 (Seeed Wio-SX1262) en USB.
+# Vendor Espressif : 303a. Adapter idProduct si tes modules diffèrent :
+#   udevadm info -a -n /dev/ttyACM0 | grep -E 'idVendor|idProduct|serial'
+SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", SYMLINK+="seeed-meshtastic-%n", MODE="0660", GROUP="dialout"

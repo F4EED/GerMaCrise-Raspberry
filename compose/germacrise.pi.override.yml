@@ -1,0 +1,22 @@
+# Surcharge Pi 4 : moins de RAM, API joignable depuis le LAN.
+# Usage :
+#   docker compose -f docker-compose.poc.yml -f germacrise.pi.override.yml up -d
+
+services:
+  db:
+    deploy:
+      resources:
+        limits:
+          memory: ${POSTGIS_MEMORY_LIMIT:-768m}
+        reservations:
+          memory: 256m
+
+  backend:
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-maincourante}:${POSTGRES_PASSWORD:-maincourante_pass}@db:5432/${POSTGRES_DB:-main_courante}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+
+  frontend:
+    environment:
+      REACT_APP_API_URL: http://${PI_HOST}:8000
+      REACT_APP_API_URL_EXTERNAL: http://${PI_HOST}:8000

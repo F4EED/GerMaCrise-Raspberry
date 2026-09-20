@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Poste de crise — GerMaCrise</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: system-ui, sans-serif; margin: 0; background: #111827; color: #e5e7eb; }
+    header { padding: 1.5rem 1.25rem; background: #0f172a; border-bottom: 1px solid #334155; }
+    h1 { margin: 0 0 .35rem; font-size: 1.45rem; }
+    p { margin: 0; color: #94a3b8; }
+    main { display: grid; gap: 1rem; padding: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    a.card { display: block; padding: 1rem 1.1rem; background: #1e293b; border: 1px solid #334155; border-radius: 12px; color: inherit; text-decoration: none; }
+    a.card:hover { border-color: #38bdf8; }
+    a.card h2 { margin: 0 0 .4rem; font-size: 1.05rem; }
+    a.card span { color: #7dd3fc; font-size: .85rem; }
+    footer { padding: 0 1.25rem 1.5rem; color: #64748b; font-size: .85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Poste de crise local</h1>
+    <p>100 % hors-ligne — tout tourne sur ce Raspberry Pi. Remplace <code>HOST</code> par l’IP du Pi si les liens restent en localhost.</p>
+  </header>
+  <main>
+    <a class="card" href="http://HOST:3000/" target="_blank" rel="noopener">
+      <h2>GerMaCrise</h2>
+      <span>:3000 — main courante, annuaire, PCS</span>
+    </a>
+    <a class="card" href="http://HOST:8001/" target="_blank" rel="noopener">
+      <h2>Cartoff</h2>
+      <span>:8001 — carte opérationnelle PMTiles</span>
+    </a>
+    <a class="card" href="http://HOST:8088/" target="_blank" rel="noopener">
+      <h2>MeshQTT</h2>
+      <span>:8088 — messages mesh, nœuds</span>
+    </a>
+    <a class="card" href="http://HOST:3081/" target="_blank" rel="noopener">
+      <h2>Cartographie GerMaCrise</h2>
+      <span>:3081 — fond PMTiles BAN</span>
+    </a>
+    <a class="card" href="http://HOST:18083/" target="_blank" rel="noopener">
+      <h2>EMQX 5.3</h2>
+      <span>:18083 — broker MQTT (pas Mosquitto)</span>
+    </a>
+    <a class="card" href="http://HOST:9443/" target="_blank" rel="noopener">
+      <h2>Portainer</h2>
+      <span>:9443 — piles Docker</span>
+    </a>
+    <a class="card" href="http://HOST:8002/" target="_blank" rel="noopener">
+      <h2>Extracteur PMTiles</h2>
+      <span>:8002 — internet requis pour extraire</span>
+    </a>
+    <a class="card" href="/meshcore-regions/" target="_blank" rel="noopener">
+      <h2>Régions MeshCore</h2>
+      <span>générateur CLI répéteur</span>
+    </a>
+    <a class="card" href="http://HOST:5173/" target="_blank" rel="noopener">
+      <h2>Bipper web</h2>
+      <span>:5173 — USB/BLE Seeed (sur le Pi)</span>
+    </a>
+  </main>
+  <footer>Ne pas ouvrir les cartes en file:// — HTTP Range obligatoire pour les PMTiles.</footer>
+  <script>
+    const host = location.hostname || "127.0.0.1";
+    document.querySelectorAll("a.card[href*='HOST']").forEach((a) => {
+      a.href = a.href.replace("HOST", host);
+    });
+  </script>
+</body>
+</html>

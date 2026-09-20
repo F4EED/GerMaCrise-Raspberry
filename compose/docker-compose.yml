@@ -1,0 +1,117 @@
+# Stack socle du poste de crise (Pi 4, 100 % local).
+# GerMaCrise a son propre compose (lancé par scripts/install.sh).
+#
+# Broker MQTT : EMQX 5.3.2 uniquement.
+
+name: crise-pi
+
+services:
+  emqx:
+    image: ${EMQX_IMAGE:-emqx:5.3.2}
+    container_name: crise-emqx
+    restart: unless-stopped
+    ports:
+      - "${EMQX_MQTT_PORT:-1883}:1883"
+      - "${EMQX_DASHBOARD_PORT:-18083}:18083"
+    volumes:
+      - emqx-data:/opt/emqx/data
+      - emqx-log:/opt/emqx/log
+    environment:
+      EMQX_NAME: crise
+      EMQX_HOST: 127.0.0.1
+      EMQX_DASHBOARD__DEFAULT_USERNAME: ${EMQX_DASHBOARD_USER:-admin}
+      EMQX_DASHBOARD__DEFAULT_PASSWORD: ${EMQX_DASHBOARD_PASSWORD:-ChangeMoiEMQX53}
+      TZ: Europe/Paris
+    healthcheck:
+      test: ["CMD", "emqx", "ctl", "status"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - crise
+
+  portail:
+    image: nginx:1.27-alpine
+    container_name: crise-portail
+    restart: unless-stopped
+    ports:
+      - "${PORTAIL_PORT:-80}:80"
+    volumes:
+      - ../portal:/usr/share/nginx/html:ro
+      - ./nginx/portail.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../apps/Meshcore-carte-region:/usr/share/nginx/html/meshcore-regions:ro
+    depends_on:
+      - emqx
+    networks:
+      - crise
+
+  cartoff:
+    build:
+      context: ./cartoff
+      dockerfile: Dockerfile
+    container_name: crise-cartoff
+    restart: unless-stopped
+    ports:
+      - "${CARTOFF_PORT:-8001}:8001"
+    volumes:
+      - ../apps/cartoff:/app
+      - ../data/pmtiles:/app/pmtiles-extra:ro
+    working_dir: /app
+    command: ["python3", "serve.py", "-p", "8001"]
+    networks:
+      - crise
+
+  meshqtt:
+    build:
+      context: ./meshqtt
+      dockerfile: Dockerfile
+    container_name: crise-meshqtt
+    restart: unless-stopped
+    ports:
+      - "${MESHQTT_PORT:-8088}:8080"
+    volumes:
+      - ../apps/MeshQTT:/app
+      - ../overlay/meshqtt/settings.json:/app/data/settings.json
+    environment:
+      TZ: Europe/Paris
+    working_dir: /app
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+    depends_on:
+      emqx:
+        condition: service_healthy
+    networks:
+      - crise
+
+  pmtiles:
+    image: python:3.12-slim-bookworm
+    container_name: crise-pmtiles
+    restart: unless-stopped
+    ports:
+      - "${PMTILES_PORT:-8002}:8002"
+    volumes:
+      - ../apps/pmtiles:/app
+      - ../data/pmtiles:/app/pmtiles
+    working_dir: /app
+    environment:
+      MQTT_HOST: emqx
+      MQTT_PORT: 1883
+      MQTT_USER: ${MQTT_USER:-meshtastic}
+      MQTT_PASS: ${MQTT_PASSWORD:-ChangeMoiMQTT}
+      TZ: Europe/Paris
+    command: ["python3", "serve.py", "-p", "8002"]
+    depends_on:
+      emqx:
+        condition: service_healthy
+    networks:
+      - crise
+    profiles:
+      - outils
+
+volumes:
+  emqx-data:
+  emqx-log:
+
+networks:
+  crise:
+    name: crise_lan

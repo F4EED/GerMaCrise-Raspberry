@@ -1,0 +1,10 @@
+.env
+apps/
+overlay/germacrise.env
+data/pmtiles/*.pmtiles
+data/images/*.tar
+data/images/*.tar.gz
+*.log
+.venv/
+__pycache__/
+*.pyc

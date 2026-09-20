@@ -1,0 +1,29 @@
+{
+  "mqtt": {
+    "broker": "emqx",
+    "port": 1883,
+    "username": "",
+    "password": "",
+    "root_topic": "msh/EU_868",
+    "gateway_id": ""
+  },
+  "meshtastic": {
+    "short_name": "PC",
+    "long_name": "PosteCrise",
+    "node_id": null,
+    "active_channel": 0,
+    "channels": [
+      {"name": "LongFast", "key": "AQ==", "role": "PRINCIPAL", "enabled": true},
+      {"name": "", "key": "", "role": "DESACTIVE", "enabled": false},
+      {"name": "", "key": "", "role": "DESACTIVE", "enabled": false},
+      {"name": "", "key": "", "role": "DESACTIVE", "enabled": false},
+      {"name": "", "key": "", "role": "DESACTIVE", "enabled": false},
+      {"name": "", "key": "", "role": "DESACTIVE", "enabled": false},
+      {"name": "mqtt", "key": "AQ==", "role": "SECONDAIRE", "enabled": true},
+      {"name": "", "key": "", "role": "DESACTIVE", "enabled": false}
+    ]
+  },
+  "ui": {
+    "theme": "dark"
+  }
+}
